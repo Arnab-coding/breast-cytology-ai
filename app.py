@@ -65,7 +65,7 @@ st.markdown(
       <div class="hero-copy">An experimental deep-learning interface for exploring binary classification of breast fine-needle aspiration (FNA) cytology photomicrographs.</div>
       <div style="margin-top:.8rem">
         <span class="pill">MobileNetV2</span><span class="pill">Benign vs Malignant</span>
-        <span class="pill">Grad-CAM explainability</span><span class="pill">Research use only</span>
+        <span class="pill">Grad-CAM temporarily disabled</span><span class="pill">Research use only</span>
       </div>
     </div>
     <div class="notice"><b>Research-use notice:</b> This prototype is not a medical device and must not be used to diagnose, exclude, screen, or manage breast disease. The displayed values are model scores, not necessarily calibrated clinical probabilities. Final interpretation requires a qualified pathologist and appropriate clinical correlation.</div>
@@ -189,7 +189,9 @@ with left:
                 st.error("The model returned an invalid sigmoid score. No interpretation is shown.")
                 st.session_state.prediction_payload = None
             else:
-                heatmap = make_gradcam(batch, loaded_model)
+                # Grad-CAM is temporarily disabled to isolate the Lambda/Keras issue.
+                # Main model inference and the Benign/Malignant scores remain enabled.
+                heatmap = None
                 st.session_state.prediction_payload = {
                     "raw_score": raw_score,
                     "image_hash": image_hash,
@@ -229,7 +231,7 @@ with right:
         with st.expander("How should I interpret these scores?"):
             st.write("Using the label convention supplied for this project (0 = Benign; 1 = Malignant), the sigmoid output is displayed as the malignant-class score and its complement as the benign-class score.")
             st.warning("These are raw model scores and may not be calibrated probabilities. A score is not the same as the chance that a patient has cancer.")
-        st.markdown('<div class="section-label" style="margin-top:1.2rem">03 / Explainability · Grad-CAM</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-label" style="margin-top:1.2rem">03 / Explainability</div>', unsafe_allow_html=True)
         heatmap = payload.get("gradcam")
         if heatmap is not None and original_image is not None:
             g1, g2 = st.columns(2)
@@ -239,7 +241,7 @@ with right:
                 st.image(make_overlay(original_image, heatmap), caption="Grad-CAM overlay", width="stretch")
             st.markdown('<div class="small">Warm regions indicate areas contributing more to the model’s malignant-class score. Grad-CAM is a coarse visual explanation, not a validated map of malignant cells and not proof of biological reasoning.</div>', unsafe_allow_html=True)
         else:
-            st.info("Grad-CAM was not available for this runtime/model configuration. The classification score is shown without a heatmap.")
+            st.info("Grad-CAM is temporarily disabled while resolving Keras compatibility. The classification score is shown without a heatmap.")
     else:
         st.markdown(
             """<div class="panel" style="min-height:260px"><div class="small">RESULTS WILL APPEAR HERE</div>
