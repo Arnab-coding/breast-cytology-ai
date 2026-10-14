@@ -1,0 +1,5 @@
+streamlit>=1.46,<2
+tensorflow==2.19.0
+numpy<2.2
+Pillow>=10.0
+matplotlib>=3.8
